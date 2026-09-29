@@ -1,6 +1,6 @@
 import os
 
-from github import get_recent_events
+from lambda_asset.github import get_recent_events
 
 
 def lambda_handler(event, context):
