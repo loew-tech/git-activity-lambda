@@ -1,15 +1,59 @@
-import aws_cdk as core
-import aws_cdk.assertions as assertions
+import unittest
+
+from aws_cdk import App, assertions
 
 from git_activity_lambda.git_activity_lambda_stack import GitActivityLambdaStack
 
-# example tests. To run these tests, uncomment this file along with the example
-# resource in git_activity_lambda/git_activity_lambda_stack.py
-def test_sqs_queue_created():
-    app = core.App()
-    stack = GitActivityLambdaStack(app, "git-activity-lambda")
-    template = assertions.Template.from_stack(stack)
 
-#     template.has_resource_properties("AWS::SQS::Queue", {
-#         "VisibilityTimeout": 300
-#     })
+class TestGitActivityLambdaStack(unittest.TestCase):
+
+    def setUp(self):
+        app = App()
+
+        self.stack = GitActivityLambdaStack(
+            app,
+            "TestGitActivityLambdaStack",
+        )
+
+        self.template = assertions.Template.from_stack(self.stack)
+
+    def test_lambda_configuration(self):
+        self.template.has_resource_properties(
+            "AWS::Lambda::Function",
+            {
+                "Runtime": "python3.13",
+                "Handler": "app.lambda_handler",
+                "Environment": {
+                    "Variables": {
+                        "GITHUB_TOKEN_SECRET": "git-activity/github-token",
+                    },
+                },
+            },
+        )
+
+    def test_lambda_has_secrets_manager_permission(self):
+        self.template.has_resource_properties(
+            "AWS::IAM::Policy",
+            {
+                "PolicyDocument": {
+                    "Statement": assertions.Match.array_with(
+                        [
+                            assertions.Match.object_like(
+                                {
+                                    "Action": assertions.Match.array_with(
+                                        [
+                                            "secretsmanager:GetSecretValue",
+                                        ]
+                                    ),
+                                    "Effect": "Allow",
+                                }
+                            )
+                        ]
+                    )
+                },
+            },
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
