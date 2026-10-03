@@ -1,8 +1,8 @@
-from urllib.request import Request, urlopen
 import json
+from urllib.request import Request, urlopen
 
 GITHUB_API_URL = "https://api.github.com"
-GITHB_API_VERSION = "2022-11-28"
+GITHUB_API_VERSION = "2022-11-28"
 
 
 def get_recent_events(token: str) -> list[dict]:
@@ -11,9 +11,9 @@ def get_recent_events(token: str) -> list[dict]:
         headers={
             "Accept": "application/vnd.github+json",
             "Authorization": f"Bearer {token}",
-            "X-Github-Api-Version": GITHB_API_VERSION,
-            "User-Agent": "github-activity-lambda"
-        }
+            "X-Github-Api-Version": GITHUB_API_VERSION,
+            "User-Agent": "github-activity-lambda",
+        },
     )
 
     with urlopen(request) as response:

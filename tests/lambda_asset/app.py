@@ -1,7 +1,28 @@
+import os
 import unittest
 from unittest.mock import patch
 
-from lambda_asset.app import lambda_handler
+from lambda_asset.app import get_github_token, lambda_handler
+
+
+class TestGetGithubToken(unittest.TestCase):
+
+    @patch("lambda_asset.app.secrets_manager")
+    @patch.dict(os.environ, {"GITHUB_TOKEN_SECRET": "github-token-secret"})
+    def test_get_github_token(self, mock_secrets_manager):
+        expected = "test-token"
+
+        mock_secrets_manager.get_secret_value.return_value = {
+            "SecretString": expected,
+        }
+
+        actual = get_github_token()
+
+        self.assertEqual(expected, actual)
+
+        mock_secrets_manager.get_secret_value.assert_called_once_with(
+            SecretId="github-token-secret",
+        )
 
 
 class TestLambdaHandler(unittest.TestCase):
