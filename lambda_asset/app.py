@@ -2,8 +2,8 @@ import os
 
 import boto3
 
-from lambda_asset.activity import sanitize_event
-from lambda_asset.github import get_recent_events
+from activity import sanitize_event
+from github import get_recent_events
 
 _SECRET_STRING = "SecretString"
 _SECRETS_MANAGER = "secretsmanager"
