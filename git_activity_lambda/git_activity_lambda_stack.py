@@ -19,12 +19,13 @@ class GitActivityLambdaStack(Stack):
 
         activity_lambda = lambda_.Function(
             self,
-            "GitActivityLambda",
+            "GitActivityLambda_0_1",
             runtime=lambda_.Runtime.PYTHON_3_13,
             handler="app.lambda_handler",
             code=lambda_.Code.from_asset("lambda_asset"),
             environment={
                 "GITHUB_TOKEN_SECRET": github_token.secret_name,
+                "GITHUB_USERNAME": "loew-tech"
             },
         )
 
